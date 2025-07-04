@@ -6,7 +6,7 @@ An ETL pipeline for extracting, cleaning, and loading attendance and absence emp
 ## 📦 Project Structure
 
 ```
-etl-attendence-project/
+etl-attendance-project/
 ├── data/                    # Base directory for raw data files
 ├── etl/                     # Core ETL logic (extract, transform, load)
 │   ├── extract.py
@@ -34,13 +34,13 @@ DB_URL=mssql+pyodbc://sa:YourStrong!Passw0rd@host.docker.internal/DavaX?driver=O
 ### Build the container:
 
 ```
-docker build -t etl-attendence-project .
+docker build -t etl-attendance-project .
 ```
 
 ### Run the pipeline:
 
 ```
-docker run --rm -v "$(pwd)/data/attendance:/app/attendance" --env-file .env etl-attendence-project
+docker run --rm -v "$(pwd)/data/attendance:/app/attendance" --env-file .env etl-attendance-project
 ```
 
 ---
