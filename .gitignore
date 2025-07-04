@@ -1,0 +1,45 @@
+# 🐍 Fișiere Python temporare și cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# 🔧 Config și artefacte de rulare
+.env
+*.env
+*.log
+logs/
+
+# 📦 Virtual environments
+.venv/
+venv/
+env/
+
+# 🗃️ Fișiere de date generate
+data/
+*.csv
+*.xlsx
+*.ics
+
+# 📄 Rapoarte generate
+reports/
+*.pdf
+*.html
+
+# 🐳 Docker
+*.tar
+*.pid
+*.sock
+
+# 📁 Sistem
+.DS_Store
+Thumbs.db
+
+# 🧪 Teste (dacă ai)
+.coverage
+htmlcov/
+test_output/
+
+# 📘 VS Code settings (dacă folosești)
+.vscode/
