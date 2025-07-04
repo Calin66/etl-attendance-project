@@ -1,4 +1,3 @@
-
 # ETL Attendance Project
 
 An ETL pipeline for extracting, cleaning, and loading attendance and absence employee data from exported meeting CSV files (e.g. Zoom, Teams) and data bases into a SQL Server database (`DavaX`).
@@ -21,13 +20,20 @@ etl-attendance-project/
 
 ## ⚙️ Setup
 
+I had to install ODBC Driver for SQL Server from Microsoft. Version 17.
+
 ### Environment Variables
 
-Create a `.env` file in the root:
+Create a `.env` file in the root with YOUR PASSWORD for the database, this is mine (it's local):
 
 ```
 DB_URL=mssql+pyodbc://sa:YourStrong!Passw0rd@host.docker.internal/DavaX?driver=ODBC+Driver+17+for+SQL+Server
 ```
+
+If you want to create a new database / image and have the same SSMS setup as me, run: 
+
+docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=YourStrong!Passw0rd" -p 1433:1433 --name sqlserver -d mcr.microsoft.com/mssql/server:latest
+
 
 ## 🐳 Running with Docker
 
@@ -158,3 +164,4 @@ Also, this is the DDL SQL for the SQL Database.
 -- - department
 
 For DML we use real data, so I'm not going to share that here, but you can populate the tables and the csv files however you like.
+So, the .env, the CSVs in data/attendance and the DML for your database are not included here.
