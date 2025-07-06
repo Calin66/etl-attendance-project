@@ -9,6 +9,7 @@ __pycache__/
 .env
 *.env
 *.log
+SQL_ETL_Pipeline_Project_July.sql
 logs/
 
 # 📦 Virtual environments
