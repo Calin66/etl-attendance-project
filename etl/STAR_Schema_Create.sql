@@ -23,7 +23,7 @@ GO
 CREATE TABLE reporting.dim_employee (
     employee_id INT IDENTITY PRIMARY KEY,
     full_name NVARCHAR(255),
-    email NVARCHAR(255) UNIQUE,
+    email NVARCHAR(255),
     department NVARCHAR(100),
     grade NVARCHAR(100),
     manager NVARCHAR(255),

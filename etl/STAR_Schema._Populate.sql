@@ -78,6 +78,26 @@ LEFT JOIN reporting.dim_course crs ON crs.course_name = ea.course
 LEFT JOIN reporting.dim_project prj ON prj.project_code = ea.project_code;
 
 
+--testing SCD2
+
+-- dummy test with some hardcoded data
+-- we insert some dummy data that was not in the table before, you should notice that 'is_current' field is 1
+INSERT INTO reporting.dim_employee (full_name, email, department, grade, manager, discipline)
+VALUES ('Ana Ionescu', 'ana@endava.com', 'IT', 'M2', 'ion.pop@endava.com', 'Data');
+
+-- test for insert: we move the emplyee in another department, the previous row now has is_current = 0, so its no longer valid, and
+-- the new inserted one has is_current=1 with the new department.
+INSERT INTO reporting.dim_employee (full_name, email, department, grade, manager, discipline)
+VALUES ('Ana Ionescu', 'ana@endava.com', 'HR', 'M2', 'ion.pop@endava.com', 'Data');
+
+INSERT INTO reporting.dim_employee (full_name, email, department, grade, manager, discipline)
+VALUES ('Mihai Dumitrescu', 'mihai@endava.com', 'Finance', 'M2', 'alex.ionescu@endava.com', 'Ops');
+
+--test for update
+UPDATE reporting.dim_employee
+SET department = 'IT'
+WHERE email = 'mihai@endava.com' AND is_current = 1;
+
 --Verify the table creation and data population 
 SELECT 'dim_employee' AS table_name, COUNT(*) AS row_count FROM reporting.dim_employee
 UNION ALL
