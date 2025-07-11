@@ -150,9 +150,9 @@ WHERE employee_name = 'John Doe' AND activity_date = '2024-07-01';
 
 **Monthly attendance/absence per course:**
 ```sql
-SELECT course, employee_name, MONTH(activity_date) as month, SUM(present_hours) as total_present, SUM(absent_hours) as total_absent
+SELECT course, MONTH(activity_date) as month, SUM(present_hours) as total_present, SUM(absent_hours) as total_absent
 FROM employee_activity
-GROUP BY course, employee_name, MONTH(activity_date);
+GROUP BY course, MONTH(activity_date);
 ```
 
 **Flag validated data:**
