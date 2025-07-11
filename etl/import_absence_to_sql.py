@@ -9,8 +9,9 @@ def import_absence_to_sql():
     engine = create_engine(db_url)
 
     df = pd.read_csv("./data/exam_absence/absence_list.csv")
+
+
     df['activity_type'] = 'absence'
-    df['project_code'] = None
     df['course'] = None
     df['present_hours'] = 0
     df['source'] = 'confluence'

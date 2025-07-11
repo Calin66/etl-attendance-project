@@ -72,8 +72,7 @@ SELECT
     END                                                                    AS discipline
 FROM nums;
 GO
- 
- 
+  
 -- ================================================
 -- 3) Seed some courses
 -- ================================================
@@ -87,60 +86,93 @@ VALUES
     ('Azure Data Factory'),
     ('Python for Data Engineering');
 GO
+
+-- -- ================================================
+-- -- 4) Seed some projects. (we chose not to pursue projects)
+-- -- ================================================
+-- INSERT INTO reporting.dim_project (project_code)
+-- VALUES
+--     ('PRJ001'),
+--     ('PRJ002'),
+--     ('PRJ003'),
+--     ('PRJ004'),
+--     ('PRJ005'),
+--     ('PRJ006'),
+--     ('PRJ007');
+-- GO
  
  
+
 -- ================================================
--- 4) Seed some projects
--- ================================================
-INSERT INTO reporting.dim_project (project_code)
-VALUES
-    ('PRJ001'),
-    ('PRJ002'),
-    ('PRJ003'),
-    ('PRJ004'),
-    ('PRJ005'),
-    ('PRJ006'),
-    ('PRJ007');
-GO
- 
- 
--- ================================================
--- 5) Populate fact_employee_activity with random picks
+-- 5) Populate fact_employee_activity with random Course-only activity
 -- ================================================
 DECLARE @NumFacts INT = 1000;   -- adjust as needed
- 
+
 ;WITH
     E AS (SELECT employee_id FROM reporting.dim_employee),
     D AS (SELECT date_id
-            FROM reporting.dim_date
-           WHERE full_date BETWEEN '2025-01-01' AND '2025-06-30'),  -- narrow the date slice
+          FROM reporting.dim_date
+          WHERE full_date BETWEEN '2025-01-01' AND '2025-06-30'),  -- narrow the date slice
     C AS (SELECT course_id FROM reporting.dim_course),
-    P AS (SELECT project_id FROM reporting.dim_project),
     N AS (SELECT TOP (@NumFacts)
                  ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS n
           FROM sys.all_objects)
 INSERT INTO reporting.fact_employee_activity
-    (employee_id, date_id, course_id, project_id, activity_type,
+    (employee_id, date_id, course_id, activity_type,
      absent_hours, present_hours, source_system, validated)
 SELECT
     e.employee_id,
     d.date_id,
-    CASE WHEN rndType = 1 THEN c.course_id ELSE NULL END,
-    CASE WHEN rndType = 2 THEN p.project_id ELSE NULL END,
-    CASE WHEN rndType = 1 THEN 'Course' ELSE 'Project' END,
+    c.course_id,
+    'Course' AS activity_type,
     CAST(RAND(CHECKSUM(NEWID())) * 2 AS DECIMAL(5,2)) AS absent_hours,
     CAST(RAND(CHECKSUM(NEWID())) * 8 AS DECIMAL(5,2)) AS present_hours,
-    CASE WHEN rndType = 1 THEN 'LMS' ELSE 'PM' END           AS source_system,
+    'LMS' AS source_system,
     CASE WHEN RAND(CHECKSUM(NEWID())) > 0.7 THEN 1 ELSE 0 END AS validated
-FROM (
-    SELECT
-        n,
-        -- randomly choose 1 = course-based, 2 = project-based
-        ABS(CAST(CHECKSUM(NEWID()) AS INT)) % 2 + 1 AS rndType
-    FROM N
-) AS t
+FROM N
 CROSS APPLY (SELECT TOP 1 * FROM E ORDER BY NEWID()) AS e
 CROSS APPLY (SELECT TOP 1 * FROM D ORDER BY NEWID()) AS d
-CROSS APPLY (SELECT TOP 1 * FROM C ORDER BY NEWID()) AS c
-CROSS APPLY (SELECT TOP 1 * FROM P ORDER BY NEWID()) AS p;
+CROSS APPLY (SELECT TOP 1 * FROM C ORDER BY NEWID()) AS c;
 GO
+
+
+-- -- ================================================
+-- -- 5) Populate fact_employee_activity with random picks. Removed projects functionality for now.
+-- -- ================================================
+-- DECLARE @NumFacts INT = 1000;   -- adjust as needed
+ 
+-- ;WITH
+--     E AS (SELECT employee_id FROM reporting.dim_employee),
+--     D AS (SELECT date_id
+--             FROM reporting.dim_date
+--            WHERE full_date BETWEEN '2025-01-01' AND '2025-06-30'),  -- narrow the date slice
+--     C AS (SELECT course_id FROM reporting.dim_course),
+--     P AS (SELECT project_id FROM reporting.dim_project),
+--     N AS (SELECT TOP (@NumFacts)
+--                  ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS n
+--           FROM sys.all_objects)
+-- INSERT INTO reporting.fact_employee_activity
+--     (employee_id, date_id, course_id, project_id, activity_type,
+--      absent_hours, present_hours, source_system, validated)
+-- SELECT
+--     e.employee_id,
+--     d.date_id,
+--     CASE WHEN rndType = 1 THEN c.course_id ELSE NULL END,
+--     CASE WHEN rndType = 2 THEN p.project_id ELSE NULL END,
+--     CASE WHEN rndType = 1 THEN 'Course' ELSE 'Project' END,
+--     CAST(RAND(CHECKSUM(NEWID())) * 2 AS DECIMAL(5,2)) AS absent_hours,
+--     CAST(RAND(CHECKSUM(NEWID())) * 8 AS DECIMAL(5,2)) AS present_hours,
+--     CASE WHEN rndType = 1 THEN 'LMS' ELSE 'PM' END           AS source_system,
+--     CASE WHEN RAND(CHECKSUM(NEWID())) > 0.7 THEN 1 ELSE 0 END AS validated
+-- FROM (
+--     SELECT
+--         n,
+--         -- randomly choose 1 = course-based, 2 = project-based
+--         ABS(CAST(CHECKSUM(NEWID()) AS INT)) % 2 + 1 AS rndType
+--     FROM N
+-- ) AS t
+-- CROSS APPLY (SELECT TOP 1 * FROM E ORDER BY NEWID()) AS e
+-- CROSS APPLY (SELECT TOP 1 * FROM D ORDER BY NEWID()) AS d
+-- CROSS APPLY (SELECT TOP 1 * FROM C ORDER BY NEWID()) AS c
+-- CROSS APPLY (SELECT TOP 1 * FROM P ORDER BY NEWID()) AS p;
+-- GO
