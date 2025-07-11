@@ -58,6 +58,8 @@ def clean_attendance(df: pd.DataFrame, file_name: str) -> pd.DataFrame:
                 total += int(part.replace('m', ''))
         return total
 
+    df = df[df['email'].notna() & (df['email'].str.strip() != '')].copy()
+
     df['duration_minutes'] = df['duration_str'].apply(duration_to_minutes)
     df['source_dataset'] = file_name
     df['load_timestamp'] = pd.Timestamp.now()
@@ -67,6 +69,7 @@ def clean_attendance(df: pd.DataFrame, file_name: str) -> pd.DataFrame:
     df['date_day'] = pd.to_datetime(df['start_time'], format=dt_format, errors='coerce').dt.date
     df['start_time'] = pd.to_datetime(df['start_time'], format=dt_format, errors='coerce')
     df['end_time'] = pd.to_datetime(df['end_time'], format=dt_format, errors='coerce')
+    
     return df
 
 
@@ -77,7 +80,7 @@ def save_attendance_to_db(df: pd.DataFrame, engine):
         'source_dataset', 'course', 'load_timestamp'
     ]]
     final_df.to_sql("attendance", con=engine, schema="sources", if_exists="append", index=False)
-    logging.info(f"[SAVE] Inserted {len(final_df)} rows into sources.attendance.")
+    print(f"[SAVE] Inserted {len(final_df)} rows into sources.attendance.")
 
 
 def extract_attendance_data_to_db():
@@ -90,6 +93,6 @@ def extract_attendance_data_to_db():
                 df = clean_attendance(df, file.name)
                 save_attendance_to_db(df, engine)
             except Exception as e:
-                logging.warning(f"[PROCESS] Failed {file.name}: {e}")
+                print.warning(f"[PROCESS] Failed {file.name}: {e}")
     except Exception as e:
-        logging.error(f"[EXTRACT] Attendance DB insertion failed: {e}")
+        print.error(f"[EXTRACT] Attendance DB insertion failed: {e}")
