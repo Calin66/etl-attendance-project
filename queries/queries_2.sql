@@ -82,7 +82,7 @@ SELECT
         de.employee_id,
         de.full_name,
         dd.full_date,
-        dp.project_code,
+        -- dp.project_code,
         fa.present_hours,
         fa.absent_hours
 FROM reporting.fact_employee_activity AS fa
@@ -90,8 +90,8 @@ JOIN reporting.dim_employee       AS de
     ON fa.employee_id = de.employee_id
 JOIN reporting.dim_date           AS dd
     ON fa.date_id     = dd.date_id
-JOIN reporting.dim_project        AS dp
-    ON fa.project_id  = dp.project_id
+-- JOIN reporting.dim_project        AS dp
+--     ON fa.project_id  = dp.project_id
 WHERE 
         de.employee_id = @EmployeeID
         AND dd.full_date = @WorkDate

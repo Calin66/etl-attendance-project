@@ -4,6 +4,8 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 
+import logging
+
 # Script for parsing our ICS calendar file.
 # Core idea:
 # 0. The ICS exporter inserts some newlines here and there; first clean them up.
@@ -83,17 +85,17 @@ def parse_ics(file_path):
         return events
 
 def print_event(event):
-    print(f"Event: {event['title']}")
-    print(f"Start: {event['start']}")
-    print(f"End: {event['end']}")
-    print(f"Categories: {event['categories']}")
-    print(f"Description: {event['description']}")
-    print("Attendees:")
+    logging.info(f"Event: {event['title']}")
+    logging.info(f"Start: {event['start']}")
+    logging.info(f"End: {event['end']}")
+    logging.info(f"Categories: {event['categories']}")
+    logging.info(f"Description: {event['description']}")
+    logging.info("Attendees:")
     for attendee in event['attendees']:
-        print(f"  - {attendee['name']} <{attendee['email']}>")
+        logging.info(f"  - {attendee['name']} <{attendee['email']}>")
     if event['organizer']:
-        print(f"Organizer: {event['organizer']['name']} <{event['organizer']['email']}>")
-    print("-" * 40)
+        logging.info(f"Organizer: {event['organizer']['name']} <{event['organizer']['email']}>")
+    logging.info("-" * 40)
 
 def generate_absence_matrix(csv_path):
     df = pd.read_csv(csv_path)
@@ -133,7 +135,7 @@ def generate_absence_matrix(csv_path):
     return matrix
 
 def extract_calendar_events():
-    print("ICS Calendar Parser demo")
+    logging.info("ICS Calendar Parser demo")
 
     # Înlocuiește selectarea grafică cu o cale directă către fișierul .ics
     file_path = "./data/exam_absence/cld_data.ics"
@@ -141,7 +143,7 @@ def extract_calendar_events():
     # file_path = input("Introdu calea către fișierul .ics: ")
 
     if not file_path:
-        print("No file selected.")
+        print("No ICS file found.")
         exit()
 
     # Parse the ICS file
@@ -155,19 +157,19 @@ def extract_calendar_events():
         for event in results:
             # Check if any event has incomplete data
             if not event['start'] or not event['end']:
-                print('Event with incomplete times!')
+                logging.info('Event with incomplete times!')
                 print_event(event)
                 all_good = False
             if not event['title']:
-                print('Event with no title!')
+                logging.info('Event with no title!')
                 print_event(event)
                 all_good = False
             if not event['categories']:
-                print('Event with no category!')
+                logging.info('Event with no category!')
                 print_event(event)
                 all_good = False
             if not event['attendees'] and not event['organizer']:
-                print('Event with no participants!')
+                logging.info('Event with no participants!')
                 print_event(event)
                 all_good = False
 
