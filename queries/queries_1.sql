@@ -21,7 +21,7 @@ SELECT
     e.full_name,
     d.year,
     d.month,
-    AVG(fa.absent_hours) AS avg_absent_hours
+    ROUND(AVG(fa.absent_hours), 2) AS avg_absent_hours
 FROM reporting.fact_employee_activity fa
 JOIN reporting.dim_employee e ON fa.employee_id = e.employee_id
 JOIN reporting.dim_date d ON fa.date_id = d.date_id
@@ -74,14 +74,14 @@ WHERE fa.absent_hours > 0
 -- how many leave days an employee took in a specific month
 SELECT
     a.angajat_id,
-    an.nume,
-    DATENAME(MONTH, a.date_day) AS luna,
-    YEAR(a.date_day) AS an,
-    COUNT(*) AS zile_leave
+    an.nume AS full_name,
+    DATENAME(MONTH, a.date_day) AS month,
+    YEAR(a.date_day) AS year,
+    COUNT(*) AS leave_days
 FROM sources.absences a
 JOIN sources.angajati an ON a.angajat_id = an.angajat_id
 WHERE a.reason = 'Leave'
   AND MONTH(a.date_day) = 6 
   AND YEAR(a.date_day) = 2025
 GROUP BY a.angajat_id, an.nume, DATENAME(MONTH, a.date_day), YEAR(a.date_day)
-ORDER BY zile_leave DESC;
+ORDER BY leave_days DESC;
